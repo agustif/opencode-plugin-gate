@@ -46,6 +46,16 @@ export const awaitPlugins = Plugin.awaitActivation.pipe(
   }),
 )
 
+// Catalog routes are what the picker needs in order to open. Keep the same
+// budget so a fast plugin still contributes models, but serve the catalog
+// already on hand when activation runs long. model.updated fills the rest in.
+export const awaitPluginsForCatalog = Plugin.awaitActivation.pipe(
+  Effect.timeoutOrElse({
+    duration: "5 seconds",
+    orElse: () => Effect.void,
+  }),
+)
+
 export function response<A, E, R>(data: Effect.Effect<A, E, R>) {
   return Effect.gen(function* () {
     const location = yield* Location.Service
